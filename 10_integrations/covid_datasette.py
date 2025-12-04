@@ -38,7 +38,7 @@ import modal
 app = modal.App("example-covid-datasette")
 datasette_image = (
     modal.Image.debian_slim()
-    .pip_install("datasette~=0.63.2", "sqlite-utils")
+    .uv_pip_install("datasette~=0.65.2", "sqlite-utils")
     .apt_install("unzip")
 )
 
@@ -242,8 +242,8 @@ def refresh_db():
 @app.function(
     image=datasette_image,
     volumes={VOLUME_DIR: volume},
-    allow_concurrent_inputs=16,
 )
+@modal.concurrent(max_inputs=16)
 @modal.asgi_app()
 def ui():
     from datasette.app import Datasette
